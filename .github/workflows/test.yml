@@ -1,0 +1,41 @@
+
+name: "Test"
+
+on:
+  pull_request:
+    branches:
+      - "*"
+  push:
+    branches:
+      - "master"
+      - "main"
+
+jobs:
+  pypy:
+    name: PyPy
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version:
+          - "3.6.*=*pypy*"
+    steps:
+      - uses: actions/checkout@v2
+
+      - uses: conda-incubator/setup-miniconda
+        with:
+          python-version: ${{ matrix.python-version }}
+          environment-file: environment.yml
+
+      - name: Conda info
+        shell: bash -l {0}
+        run: conda info
+
+      - name: Test PyPy
+        shell: bash -l {0}
+        run: |
+          set -x
+          which python
+          which pypy
+          python -V
+          pypy -V
